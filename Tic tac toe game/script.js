@@ -34,7 +34,7 @@ boxes.forEach(function (box) {    // using forEach to add event listener on each
 
 
 function checkWinner() {   // declaring a function to check winner conditions
-    for (const pattern of winPatterns) {   // Loops through each pattern in winPatterns
+    for (const pattern of winPatterns) {   // Loops through each pattern in winPatterns. checking each winning pattern
         let pos1Val = boxes[pattern[0]].innerText   // pattern[0] pattern[1] pattern[2] represent the 3 indexes of a winning pattern.
         let pos2Val = boxes[pattern[1]].innerText   // boxes[pattern[0]].innerText Prints the actual content inside the three boxes at those indexes.
         let pos3Val = boxes[pattern[2]].innerText
@@ -42,8 +42,17 @@ function checkWinner() {   // declaring a function to check winner conditions
         if (pos1Val !== "" && pos2Val !== "" && pos3Val !== "") {   // Condition to make sure that the boxes are not empty.
             if (pos1Val === pos2Val && pos2Val === pos3Val) {   // condition to check weather values in all three boxes are same
                 showWinner(pos1Val);   // calling the showWinner function and passing pos1Val as argument as value of pos1Val is winner
+                return;  // exit the function if a winner is found
             }
         }
+    }
+
+    // This only runs if no winner was found
+    let allFilled = Array.from(boxes).every((box) => {  // Array.from() convertes boxes(nodelist) into array
+        return box.innerText !== "";  // .every() checks every element in the array for a specific condition. returns true only if every box is not empty
+    })
+    if (allFilled) {  // function to run if allFilled is true
+        showDraw();
     }
 };
 
@@ -57,6 +66,14 @@ function showWinner(winner) {   // declaring a function to display winner messag
     });
 }
 
+function showDraw() {
+    winnerMsg.innerText = "It's a Draw!!";
+    msgContainer.classList.remove('hide')
+
+    boxes.forEach(function (box) {
+        box.disabled = true;
+    })
+}
 
 function resetGame() {   // declaring a function for reset button to reset the game
     turnO = true;   // playerO's turn
