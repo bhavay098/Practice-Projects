@@ -67,6 +67,8 @@ window.addEventListener('load', function () {  // adding event listner on window
 })
 
 
+// Reattaching Event listeners on delete btns manually through event delegation after reload cuz when we restore list items from localStorage using innerHTML, the delete buttons lose their event listeners or their JavaScript functionality to delete.
+
 expenseList.addEventListener('click', function (e) {
     if (e.target.classList.contains('dltBtn')) {
         let li = e.target.parentElement;  // creating a reference (a variable) that points to the existing li element in the DOM loaded from local storage. declaring li here cuz JavaScript doesn't know which li we're referring to unless we tell it explicitly inside our event Listener.
