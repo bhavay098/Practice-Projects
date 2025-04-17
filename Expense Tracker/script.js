@@ -69,7 +69,7 @@ window.addEventListener('load', function () {  // adding event listner on window
 
 expenseList.addEventListener('click', function (e) {
     if (e.target.classList.contains('dltBtn')) {
-        let li = e.target.parentElement;  // declaring li as the parent element of delete btn
+        let li = e.target.parentElement;  // creating a reference (a variable) that points to the existing li element in the DOM loaded from local storage. declaring li here cuz JavaScript doesn't know which li we're referring to unless we tell it explicitly inside our event Listener.
         let amountText = li.innerText.split('$')[1];  // extracting the amount as an array
         let amountValue = parseFloat(amountText);  // converting amount into Number which was an array
 
