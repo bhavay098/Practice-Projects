@@ -6,20 +6,23 @@ let city = document.getElementById('city')   // getting access of city name to b
 const humidity = document.getElementById('humidity')   // getting access of humidity to be displayed
 const wind = document.getElementById('wind')   // getting access of wind speed to be displayed
 const container = document.getElementById('container')   // getting access of the main div container
+const apiKey = "7be0e4f3594f76ee554ae4f5027627f7";  // API key
+const apiURL = "https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}";  // API URL
 
 
 async function getData(cityName) {   // creating function for fetching API response
 
     try {
-        const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=1d407b3639ed4292b77225159252903&q=${cityName}&aqi=yes`);  // Makes a network request to the WeatherAPI.
-        if (!response.ok) {   // If the API returns an error response (e.g., 404), handle it manually
-            throw new Error(`City not found (${response.status})`)   // This stops execution if the API call fails.
-            // The throw keyword manually generates an error in JavaScript. It stops execution and sends the error to the nearest catch block.
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`);  // Makes a network request to the WeatherAPI.
+        let data = await response.json();  // converts the response data (which is in JSON format) into a JavaScript object.
+        if (!response.ok) {   // API responded, but something's wrong (e.g., wrong city). handles all failed HTTP responses (like 404, 401, 500).
+            alert(data.message || 'City not found')  // data.message gives user-friendly messages from the API itself (like "city not found").
+            return null;  // prevents crashes
         }
-        return await response.json()   // converts the response data (which is in JSON format) into a JavaScript object.
+        return data;  // if API call is successful, returns the API response when this function will be caled
 
-    } catch (error) {
-        alert(error.message);   // Shows an alert with the error message
+    } catch (error) {  // API didn't even get the request (network issue, bad fetch)
+        alert('Network error. Please try again later.');   // Shows an alert with the error message
         return null;   // Use return null in catch to avoid crashes and gracefully handle errors
     }
 }
@@ -37,13 +40,13 @@ search.addEventListener('click', async function () {   // adding event listener 
     document.querySelector('.weather').style.display = 'block'   // Displaying weather details after search as initially they were hidden
 
 
-    const condition = result.current.condition.text.toLowerCase()   // storing weather condition in variable. toLowerCase() ensures case-insensitive comparison.
+    const condition = result.weather[0].main.toLowerCase()   // storing weather condition in variable. toLowerCase() ensures case-insensitive comparison.
 
     if (condition.includes('clear')) {   // includes() allows partial matches (e.g., "Light rain" will match "rain").
         weatherIcon.src = 'images/clear.png'   // updating weather icon based on diff weather condition
         container.style.backgroundImage = "url('https://i.gifer.com/Lx0q.gif')"   // updating the bg of div based on weather condition
     }
-    else if (condition.includes('cloudy')) {
+    else if (condition.includes('clouds')) {
         weatherIcon.src = 'images/clouds.png'
         container.style.backgroundImage = "url('https://i.gifer.com/srG.gif')"
     }
@@ -51,7 +54,7 @@ search.addEventListener('click', async function () {   // adding event listener 
         weatherIcon.src = 'images/drizzle.png'
         container.style.backgroundImage = "url('https://i.gifer.com/LSzq.gif')"
     }
-    else if (condition.includes('mist')) {
+    else if (condition.includes('atmosphere')) {
         weatherIcon.src = 'images/mist.png'
         container.style.backgroundImage = "url('https://i.gifer.com/CRl.gif')"
     }
@@ -64,8 +67,8 @@ search.addEventListener('click', async function () {   // adding event listener 
         container.style.backgroundImage = "url('https://i.gifer.com/YWuH.gif')"
     }
 
-    temperature.innerText = `${Math.round(result.current.temp_c)}°c`   // updating temperature & using Math.round() to remove decimals
-    city.innerText = `${result.location.name}, ${result.location.country}`   // updating city & country name
-    humidity.innerText = `${result.current.humidity} %`   // updating humidity
-    wind.innerText = `${result.current.wind_kph} km/h`   // updating wind speed
+    temperature.innerText = `${Math.round(result.main.temp)}°c`   // updating temperature & using Math.round() to remove decimals
+    city.innerText = `${result.name}, ${result.sys.country}`   // updating city & country name
+    humidity.innerText = `${result.main.humidity} %`   // updating humidity
+    wind.innerText = `${result.wind.speed} km/h`   // updating wind speed
 })
