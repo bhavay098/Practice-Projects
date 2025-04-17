@@ -15,6 +15,7 @@ async function getData(cityName) {   // creating function for fetching API respo
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`);  // Makes a network request to the WeatherAPI.
         let data = await response.json();  // converts the response data (which is in JSON format) into a JavaScript object.
+        
         if (!response.ok) {   // API responded, but something's wrong (e.g., wrong city). handles all failed HTTP responses (like 404, 401, 500).
             alert(data.message || 'City not found')  // data.message gives user-friendly messages from the API itself (like "city not found").
             return null;  // prevents crashes
